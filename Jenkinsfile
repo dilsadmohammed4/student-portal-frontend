@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = "dilsadmohammed4/student-portal-frontend"
         DOCKER_TAG = "1.0.0"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        GIT_REPO = "https://github.com/dilsadmohammed4/student-portal-ui.git"
+        GIT_REPO = "https://github.com/dilsadmohammed4/student-portal-frontend.git"
         BRANCH = "master"
     }
 
@@ -66,16 +66,16 @@ pipeline {
             steps {
                 // Stop existing container if running
                 sh '''
-                    if docker ps -a | grep -q student-portal-ui; then
-                        docker stop student-portal-ui
-                        docker rm student-portal-ui
+                    if docker ps -a | grep -q student-portal-frontend; then
+                        docker stop student-portal-frontend
+                        docker rm student-portal-frontend
                     fi
                 '''
 
                 // Run new container
                 sh '''
                     docker run -d \
-                        --name student-portal-ui \
+                        --name student-portal-frontend \
                         -p 3000:3000 \
                         -e REACT_APP_API_URL=http://localhost:9000 \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
