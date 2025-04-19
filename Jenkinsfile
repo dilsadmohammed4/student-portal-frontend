@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "dilsadmohammed4/student-portal-ui"
+        DOCKER_IMAGE = "dilsadmohammed4/student-portal-frontend"
         DOCKER_TAG = "1.0.0"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         GIT_REPO = "https://github.com/dilsadmohammed4/student-portal-ui.git"
@@ -12,6 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Clean workspace and checkout code
                 cleanWs()
                 git branch: "${BRANCH}", url: "${GIT_REPO}"
             }
@@ -39,24 +40,42 @@ pipeline {
             }
         }
 
-        stage('Build & Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('', 'dockerhub-credentials') {
-                        def image = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                        image.push()
-                        image.push("latest")
-                    }
-                }
+                // Build Docker image
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG}"
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                // Login to DockerHub
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                // Push Docker image to DockerHub
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
 
         stage('Deploy') {
             steps {
+                // Stop existing container if running
                 sh '''
-                    docker rm -f student-portal-ui || true
+                    if docker ps -a | grep -q student-portal-ui; then
+                        docker stop student-portal-ui
+                        docker rm student-portal-ui
+                    fi
+                '''
 
-                    docker run -d --name student-portal-ui \
+                // Run new container
+                sh '''
+                    docker run -d \
+                        --name student-portal-ui \
                         -p 3000:3000 \
                         -e REACT_APP_API_URL=http://localhost:9000 \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
