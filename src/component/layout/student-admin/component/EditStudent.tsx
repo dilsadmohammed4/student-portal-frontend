@@ -86,7 +86,7 @@ export const EditStudent = () => {
     return (
         <>
             <Navbar color={'bg-dark'}/>
-            <Headings color={'text-dark'} heading={'EDIT STUDENT'}/>
+            <Headings color={'text-dark'} heading={'EDIT STUDENT DATA'}/>
             <section className="mt-3">
                 <div className="container">
                     <div className="row">
@@ -98,7 +98,7 @@ export const EditStudent = () => {
                                         name={'name'}
                                         value={student.name}
                                         onChange={e => updateInput(e)}
-                                        className="form-control" placeholder="Full Name" type="text"/>
+                                        className="form-control" placeholder="Name" type="text"/>
                                 </div>
                                 <div className="mb-2">
                                     <input
