@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: student-portal-frontend
-          image: dilsadmohammed4/student-portal-frontend:1.0.0
+          image: dilsadmohammed4/student-portal-frontend:${BUILD_NUMBER}
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

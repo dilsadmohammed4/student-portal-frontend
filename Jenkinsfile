@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "dilsadmohammed4/student-portal-frontend"
-        DOCKER_TAG = "1.0.0"
+        DOCKER_TAG = "${BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         GIT_REPO = "https://github.com/dilsadmohammed4/student-portal-frontend.git"
         BRANCH = "master"
@@ -68,21 +68,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Apply Kubernetes configurations
-                    sh '''
+                    // Replace the image tag in deployment file
+                    sh """
+                        sed -i 's|image: dilsadmohammed4/student-portal-frontend:.*|image: dilsadmohammed4/student-portal-frontend:${DOCKER_TAG}|' k8s/deployment.yaml
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
-                        
-                        # Wait for deployment to complete
                         kubectl rollout status deployment/student-portal-frontend
-                        
-                        # Verify pods are running
-                        kubectl get pods -l app=student-portal-frontend
-                    '''
+                    """
                 }
             }
         }
-    }
 
     post {
         always {
