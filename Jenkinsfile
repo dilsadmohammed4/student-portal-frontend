@@ -7,6 +7,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         GIT_REPO = "https://github.com/dilsadmohammed4/student-portal-frontend.git"
         BRANCH = "master"
+        KUBECONFIG = 'C:/Users/dilsa/.kube/config' // Full path (e.g., C:\Users\dilsa\.kube\config or /home/jenkins/.kube/config)
     }
 
     stages {
