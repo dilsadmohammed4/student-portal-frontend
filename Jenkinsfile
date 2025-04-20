@@ -66,22 +66,19 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // Stop existing container if running
-                sh '''
-                    if docker ps -a | grep -q student-portal-frontend; then
-                        docker stop student-portal-frontend
-                        docker rm student-portal-frontend
-                    fi
-                '''
-
-                // Run new container
-                sh '''
-                    docker run -d \
-                        --name student-portal-frontend \
-                        -p 3000:3000 \
-                        -e REACT_APP_API_URL=http://localhost:9000 \
-                        ${DOCKER_IMAGE}:${DOCKER_TAG}
-                '''
+                script {
+                    // Apply Kubernetes configurations
+                    sh '''
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                        
+                        # Wait for deployment to complete
+                        kubectl rollout status deployment/student-portal-frontend
+                        
+                        # Verify pods are running
+                        kubectl get pods -l app=student-portal-frontend
+                    '''
+                }
             }
         }
     }

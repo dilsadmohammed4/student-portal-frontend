@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-portal-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-portal-frontend
+  template:
+    metadata:
+      labels:
+        app: student-portal-frontend
+    spec:
+      containers:
+        - name: student-portal-frontend
+          image: dilsadmohammed4/student-portal-frontend:1.0.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL
+              value: "http://student-portal-service:9000"
