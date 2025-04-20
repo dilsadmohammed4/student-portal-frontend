@@ -86,7 +86,7 @@ export const EditStudent = () => {
     return (
         <>
             <Navbar color={'bg-dark'}/>
-            <Headings color={'text-dark'} heading={'EDIT STUDENT DATA'}/>
+            <Headings color={'text-dark'} heading={'EDIT STUDENT'}/>
             <section className="mt-3">
                 <div className="container">
                     <div className="row">
